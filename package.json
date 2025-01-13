@@ -9,7 +9,8 @@
     "dev": "npx nodemon src/index.js"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
