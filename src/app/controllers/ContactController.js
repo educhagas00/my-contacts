@@ -7,15 +7,39 @@ class ContactController {
     response.json(contacts);
   }
 
-  show() {
+  async show(request, response) {
     // exibir um único registro
+    const { id } = request.params;
+
+    const contact = await ContactsRepository.findById(id);
+
+    if (!contact) {
+      return response.status(404).json({ error: 'Contact not found' });
+    }
+
+    response.json(contact);
   }
 
   store() {}
 
   update() {}
 
-  delete() {}
+  async delete(request, response) {
+    // deletar um contato
+
+    const { id } = request.params;
+
+    const contact = await ContactsRepository.findById(id);
+
+    if (!contact) {
+      return response.status(404).json({ error: 'Contact not found' });
+    }
+
+    await ContactsRepository.delete(id);
+
+    // resposta de sucesso sem conteúdo
+    response.sendStatus(204);
+  }
 }
 
 // design pattern: Singleton
