@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "express": "^4.21.2",
+    "pg": "^8.13.1",
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
