@@ -20,8 +20,13 @@ let contacts = [
 ];
 
 class ContactsRepository {
-  async findAll() {
-    const rows = await db.query('SELECT * FROM contacts');
+  async findAll(orderBy = 'ASC') {
+    // valor padrao é ASC, pois se não for passado nada, orderBy será undefined e quando chamar toYpperCase vai dar erro
+    const direction = orderBy.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+
+    const rows = await db.query(
+      `SELECT * FROM contacts ORDER BY name ${direction}`,
+    );
 
     return rows;
   }
@@ -69,16 +74,19 @@ class ContactsRepository {
     return row;
   }
 
-  update(id, { name, email, phone, category_id }) {
-    return new Promise((resolve) => {
-      const updatedContact = { id, name, email, phone, category_id };
+  async update(id, { name, email, phone, category_id }) {
+    // rows é um array. então é preciso desestruturar o array de rows e pegar a primeira posição (que é o registro inserido)
+    const [row] = await db.query(
+      `
+      UPDATE contacts
+      SET name = $1, email = $2, phone = $3, category_id = $4
+      WHERE id = $5
+      RETURNING *  
+    `,
+      [name, email, phone, category_id, id],
+    );
 
-      contacts = contacts.map((contact) =>
-        contact.id === id ? updatedContact : contact,
-      );
-
-      resolve(updatedContact);
-    });
+    return row;
   }
 }
 
