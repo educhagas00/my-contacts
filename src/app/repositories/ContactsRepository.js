@@ -1,5 +1,7 @@
 const { v4 } = require('uuid');
 
+const db = require('../../database'); // seo arquivo for o index, nao precisa passar o nome do arquivo
+
 let contacts = [
   {
     id: v4(),
@@ -41,14 +43,24 @@ class ContactsRepository {
     );
   }
 
-  create({ name, email, phone, category_id }) {
-    return new Promise((resolve) => {
-      const newContact = { id: v4(), name, email, phone, category_id };
+  async create({ name, email, phone, category_id }) {
+    // rows é um array. então é preciso desestruturar o array de rows e pegar a primeira posição (que é o registro inserido)
+    const [row] = await db.query(
+      `
+      INSERT INTO contacts(name, email, phone, category_id) 
+      VALUES($1, $2, $3, $4)
+      RETURNING *
+    `,
+      [name, email, phone, category_id],
+    );
 
-      contacts.push(newContact);
+    // insert into contacts(colunas que se deseja passar argumentos)
+    // $ serve para prevenir o SQL injection.
+    // é passada para o metodo query em database/index.js a (query e o value)
+    // os valores passados no array serão passados, em ordem, para os values
+    // o RETURNING * retorna o registro inserido (já que no insert não é retornado nada e queremos retornar o registro inserido no controller)
 
-      resolve(newContact);
-    });
+    return row;
   }
 
   update(id, { name, email, phone, category_id }) {

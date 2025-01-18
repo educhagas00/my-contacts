@@ -10,8 +10,8 @@ const client = new Client({
 
 client.connect();
 
-exports.query = async (query) => {
+exports.query = async (query, values) => {
   // função recebe a query e client.query recebe essa query e executa
-  const { rows } = await client.query(query);
+  const { rows } = await client.query(query, values);
   return rows;
 };
