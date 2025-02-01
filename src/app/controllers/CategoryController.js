@@ -1,6 +1,8 @@
 const CategoriesRepository = require('../repositories/CategoriesRepository');
 
 class CategoryController {
+  // try-catch para tratar erros funciona tanto em funções síncronas quanto assíncronas
+  // error handler funciona apenas em funções síncronas: devemos importar o express-async-errors
   async index(request, response) {
     const categories = await CategoriesRepository.findAll();
 
